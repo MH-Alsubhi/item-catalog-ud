@@ -20,7 +20,7 @@ session = DBSession()
 @app.route('/')
 @app.route('/categories')
 def list_categories():
-    return render_template('partials/header.html')
+    return render_template('category/categories.html')
 
 
 # add new category
