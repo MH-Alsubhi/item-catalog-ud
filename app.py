@@ -66,8 +66,10 @@ def delete_category(category_name):
 
 # list all items in category 
 @app.route('/categories/<path:category_name>/items')
-def list_items():
-    return render_template('partials/header.html')
+def list_items(category_name):
+    category = session.query(Category).filter_by(name = category_name).one()
+    items = session.query(Item).filter_by(category_id = category.id).all()
+    return render_template('item/items.html',category = category , items = items)
 
 
 # add new item
