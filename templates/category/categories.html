@@ -1,6 +1,7 @@
 {% include "partials/header.html" %}
 <div class="container">
   <!-- categories list -->
+  <a href="{{url_for('new_category')}}" class="btn btn-primary">Add</a>
   {%for category in categories%}
   <div class="list-group pt-5">
     <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">

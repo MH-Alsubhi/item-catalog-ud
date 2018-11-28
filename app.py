@@ -27,7 +27,13 @@ def list_categories():
 # add new category
 @app.route('/categories/new',methods=['GET','POST'])
 def new_category():
-    return render_template('item/items.html')
+    if request.method == 'POST':
+        new_category = Category(name=request.form['name'],desc = request.form['desc'])
+        session.add(new_category)
+        session.commit()
+        return redirect(url_for('list_categories'))
+    else:
+        return render_template('category/new.html')
 
 
 # edit category
