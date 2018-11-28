@@ -5,10 +5,7 @@
   <h2>{{category.name}}</h2>
   <a href="{{url_for('new_item',category_name = category.name)}}" class="btn btn-primary">Add item</a>
     {%for item in items%}
-    <a href="#" class="list-group-item list-group-item-action">{{item.name}}</a>
-    <a href="{{url_for('edit_item',category_name = category.name,item_name = item.name)}}" class="btn btn-warning">Edit</a>
-    <a href="{{url_for('delete_item',category_name = category.name,item_name = item.name)}}" class="btn btn-danger">Delete</a>
-    <br>
+    <a href="{{url_for('show_item',category_name = category.name,item_name = item.name)}}" class="list-group-item list-group-item-action">{{item.name}}</a>
     {%endfor%}
   </div>
 

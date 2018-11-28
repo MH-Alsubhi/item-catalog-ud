@@ -23,7 +23,7 @@
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Edit</button>
-            <a  class="btn btn-danger" href="{{url_for('list_items',category_name = category.name)}}">Cancel</a>
+            <a  class="btn btn-danger" href="{{url_for('show_item',category_name = category.name,item_name = item.name)}}">Cancel</a>
         </div>
     </form>
 

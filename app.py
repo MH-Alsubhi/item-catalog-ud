@@ -107,6 +107,13 @@ def edit_item(category_name, item_name):
     else:
         return render_template('item/edit.html', item=edited_item, categories=categories, category = category)
 
+#  show item
+@app.route('/items/<path:category_name>/<path:item_name>/show')
+def show_item(category_name,item_name):
+    category = session.query(Category).filter_by(name=category_name).one()
+    item = session.query(Item).filter_by(name=item_name).one()
+    return render_template('item/show.html', item=item,category = category)
+
 
 # delete item
 @app.route('/items/<path:category_name>/<path:item_name>', methods=['GET', 'POST'])
