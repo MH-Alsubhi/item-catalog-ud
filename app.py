@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, jsonify, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db_setup import Base, Category,Item
+from db_setup import Base, Category, Item
 
 
 app = Flask(__name__)
 
 
-engine = create_engine('sqlite:///categories.db')
+engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
 
@@ -26,17 +26,17 @@ def list_categories():
 # add new category
 @app.route('/categories/new',methods=['GET','POST'])
 def new_category():
-    return render_template('categories/new.html')
+    return render_template('item/items.html')
 
 
 # edit category
-@app.route('/categories/<int:category_id>/edit',methods=['GET','POST'])
+@app.route('/categories/<path:category_name>/edit',methods=['GET','POST'])
 def edit_category():
     return render_template('categories/edit.html')
 
 
 # delete category
-@app.route('/categories/<int:category_id>/delete',methods=['GET','POST'])
+@app.route('/categories/<path:category_name>/delete',methods=['GET','POST'])
 def delete_category():
     return "delete form will be here"
 
@@ -44,7 +44,7 @@ def delete_category():
 # //ITEMS ROUTES//
 
 # list all items in category 
-@app.route('/categories/<int:category_id>/items')
+@app.route('/categories/<path:category_name>/items')
 def list_items():
     return render_template('partials/header.html')
 
@@ -56,13 +56,13 @@ def new_item():
 
 
 # edit item
-@app.route('/items/<int:category_id>/<int:item_id>/edit',methods=['GET','POST'])
+@app.route('/items/<path:category_name>/<path:item_name>/edit',methods=['GET','POST'])
 def edit_item():
     return render_template('categories/edit.html')
 
 
 # delete item
-@app.route('/items/<int:category_id>/<int:item_id>',methods=['GET','POST'])
+@app.route('/items/<path:category_name>/<path:item_name>',methods=['GET','POST'])
 def delete_item():
     return "delete form will be here"
 
