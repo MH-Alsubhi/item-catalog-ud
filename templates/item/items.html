@@ -3,6 +3,7 @@
 <!-- items list -->
 <div class="list-group pt-5">
   <h2>{{category.name}}</h2>
+  <a href="{{url_for('new_item',category_name = category.name)}}" class="btn btn-primary">Add item</a>
     {%for item in items%}
     <a href="#" class="list-group-item list-group-item-action">{{item.name}}</a>
     {%endfor%}
