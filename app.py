@@ -38,8 +38,14 @@ def new_category():
 
 # edit category
 @app.route('/categories/<path:category_name>/edit',methods=['GET','POST'])
-def edit_category():
-    return render_template('categories/edit.html')
+def edit_category(category_name):
+    edited_category = session.query(Category).filter_by(name=category_name).one()
+    if request.method == 'POST':
+        edited_category.name = request.form['name']
+        edit_category.desc = request.form['desc']
+        return redirect(url_for('list_categories'))
+    else:
+        return render_template('category/edit.html',category = edited_category)
 
 
 # delete category
