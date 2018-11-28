@@ -105,20 +105,29 @@ def edit_item(category_name, item_name):
         session.commit()
         return redirect(url_for('list_items', category_name=category.name))
     else:
-        return render_template('item/edit.html', item=edited_item, categories=categories, category = category)
+        return render_template('item/edit.html', item=edited_item, categories=categories, category=category)
 
 #  show item
+
+
 @app.route('/items/<path:category_name>/<path:item_name>/show')
-def show_item(category_name,item_name):
+def show_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
     item = session.query(Item).filter_by(name=item_name).one()
-    return render_template('item/show.html', item=item,category = category)
+    return render_template('item/show.html', item=item, category=category)
 
 
 # delete item
 @app.route('/items/<path:category_name>/<path:item_name>', methods=['GET', 'POST'])
-def delete_item():
-    return "delete form will be here"
+def delete_item(category_name, item_name):
+    category = session.query(Category).filter_by(name=category_name).one()
+    deleted_item = session.query(Item).filter_by(name=item_name).one()
+    if request.method == 'POST':
+        session.delete(deleted_item)
+        session.commit()
+        return redirect(url_for('list_items', category_name=category.name))
+    else:
+        return render_template('item/delete.html',item=deleted_item, category=category)
 
 
 if __name__ == '__main__':
