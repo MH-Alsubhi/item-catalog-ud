@@ -50,8 +50,16 @@ def edit_category(category_name):
 
 # delete category
 @app.route('/categories/<path:category_name>/delete',methods=['GET','POST'])
-def delete_category():
-    return "delete form will be here"
+def delete_category(category_name):
+    deleted_category = session.query(Category).filter_by(name = category_name).one()
+    if request.method == 'POST':
+        session.delete(deleted_category)
+        session.commit
+        return redirect(url_for('list_categories'))
+
+    else:
+        return render_template('category/delete.html',category = deleted_category)
+
 
 
 # //ITEMS ROUTES//
