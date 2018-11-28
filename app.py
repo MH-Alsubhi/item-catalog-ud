@@ -7,7 +7,7 @@ from db_setup import Base, Category, Item
 app = Flask(__name__)
 
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('sqlite:///catalog.db?check_same_thread=False')
 Base.metadata.bind = engine
 
 
@@ -20,7 +20,8 @@ session = DBSession()
 @app.route('/')
 @app.route('/categories')
 def list_categories():
-    return render_template('category/categories.html')
+    categories = session.query(Category).all()
+    return render_template('category/categories.html',categories = categories)
 
 
 # add new category
