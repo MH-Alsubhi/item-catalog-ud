@@ -1,32 +1,20 @@
 {% include "partials/header.html" %}
 <div class="container">
-<!-- categories list -->
-<div class="list-group pt-5">
-    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+  <!-- categories list -->
+  <a href="{{url_for('new_category')}}" class="btn btn-primary">Add category</a>
+  {%for category in categories%}
+  <div class="list-group pt-5">
+    <a href="{{url_for('list_items',category_name = category.name)}}" class="list-group-item list-group-item-action flex-column align-items-start">
       <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">List group item heading</h5>
-        <h5><span class="badge badge-pill badge-primary">8</span></h5> 
+        <h5 class="mb-1">{{category.name}}</h5>
+        <h5><span class="badge badge-pill badge-primary">8</span></h5>
       </div>
-      <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-      
+      <p class="mb-1">{{category.desc}}</p>
     </a>
-    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">List group item heading</h5>
-        <h5><span class="badge badge-pill badge-primary">394</span></h5> 
-      </div>
-      <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-      
-    </a>
-    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">List group item heading</h5>
-        <h5><span class="badge badge-pill badge-primary">15</span></h5> 
-      </div>
-      <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p> 
-    </a>
+    <a href="{{url_for('edit_category',category_name = category.name)}}" class="btn btn-warning btn-sm">Edit</a>
+    <a href="{{url_for('delete_category',category_name = category.name)}}" class="btn btn-danger btn-sm">Delete</a>
   </div>
-
+  {%endfor%}
 
 </div>
 {% include "partials/footer.html" %}
