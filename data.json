@@ -1,0 +1,124 @@
+{
+    "categories": [
+        {
+            "id": 1,
+            "name": "Interpreted Programming Languages",
+            "desc": "An interpreted language is a programming language for which most of its implementations execute instructions directly, without previously compiling a program into machine-language instructions. The interpreter executes the program directly, translating each statement into a sequence of one or more subroutines already compiled into machine code. (Wikipedia)",
+            "user_id": 1,
+            "items": [
+                {
+                    "name": "APL",
+                    "desc": "Named after the book A Programming Language (Iverson, Kenneth E., 1962), APL is an array programming language. It can work simultaneously on multiple arrays of data. It is interpretive, interactive and a functional programming language.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "BASIC",
+                    "desc": "Developed by John George Kemeny and Thomas Eugene Kurtz at Dartmouth in 1964, it is an acronym for Beginner’s All-purpose Symbolic Instruction Code. It was designed with the intent of giving the non-science people an access to computers.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "Eiffel",
+                    "desc": "It is an object-oriented programming language that is ISO-standardized and used to develop extensible and reusable software. It is a development platform for many industries such as finance, aerospace and video gaming.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "Forth",
+                    "desc": "It is a structured imperative programming language, which bases its implementation on stacks. It supports an interactive execution of commands as well as the compilation of sequences of commands.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "Game Maker Language",
+                    "desc": "It is an interpreted computer programming language intended to be used in cooperation with Game Maker, an application for game creation. Mark Overmars, a Dutch computer scientist, designed this language.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "Frink",
+                    "desc": "Developed by Alan Eliasen and named after Professor John Frink, a popular fictional character. It is based on the Java Virtual Machine and focuses on science and engineering. Its striking feature is that it tracks the units of measure through all the calculations that enables quantities to contain their units of measurement.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "ICI",
+                    "desc": "Designed by Tim Long in 1992, ICI is a general purpose interpreted computer programming language. It supports dynamic typing, flexible data types and other language constructs similar to C.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "J",
+                    "desc": "Ken Iverson and Roger Hui developed this programming language that requires only the basic ASCII character set. It is an array programming language that works well with mathematical and statistical operations.",
+                    "category_id": 1,
+                    "user_id": 1
+                },
+                {
+                    "name": "Lisp",
+                    "desc": "Lisp is the second-oldest high-level programming language in widespread use today. The name Lisp is derived from ‘List Processing Language’. One of the important data structures that Lisp supports is linked list. Lisp programs deal with source code as a data structure.",
+                    "category_id": 1,
+                    "user_id": 1
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Functional Programming Languages",
+            "desc": "Functional programming languages define every computation as a mathematical evaluation. They focus on the application of functions. Many of the functional programming languages are bound to mathematical calculations.",
+            "user_id": 1,
+            "items": [
+                {
+                    "name": "Charity",
+                    "desc": "It is a purely functional, not-Turing-complete language, which means that all its programs are guaranteed to terminate. Charity was designed at the University of Calgary, a public University in Canada.",
+                    "category_id": 2,
+                    "user_id": 1
+                },
+                {
+                    "name": "Clean",
+                    "desc": "It is a purely functional programming language that supports portability across platforms, automatic garbage collection, multiple data structures and referential transparency, which means that a function with a given input will always give the same output",
+                    "category_id": 2,
+                    "user_id": 1
+                },
+                {
+                    "name": "Curry",
+                    "desc": "It is a functional logic programming language that implements functional and logic programming as well as constraint programming, wherein the relationships between variables are stated in the form of constraints",
+                    "category_id": 2,
+                    "user_id": 1
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Compiled Programming Languages",
+            "desc": "A compiled language is a programming language whose implementations are typically compilers (translators that generate machine code from source code), and not interpreters (step-by-step executors of source code, where no pre-runtime translation takes place). (Wikipedia)",
+            "user_id": 1,
+            "items": [
+                {
+                    "name": "Ada",
+                    "desc": "It is a statically typed, structured, imperative programming language that is based on Pascal. A team of CII Honeywell Bull that was led by Jean Ichbiah developed Ada. The Ada compilers are validated for mission-critical systems. Ada is an internationally standardized computer programming language.",
+                    "category_id": 3,
+                    "user_id": 1
+                },
+                {
+                    "name": "ALGOL",
+                    "desc": "Algorithmic Language, as it is called, is actually a family of imperative programming languages that was developed in the middle 1950s. It proved instrumental in the creation of programming languages like BCPL, B and C. Ole-Johan Dahl and Kristen Nygaard of the Norwegian Computing Center in Oslo were the brains behind Simula",
+                    "category_id": 3,
+                    "user_id": 1
+                },
+                {
+                    "name": "C++",
+                    "desc": "It consists of a combination of high-level and low-level language features and is hence considered as a middle-level programming language. Bjarne Stroustrup of Bell Labs developed C++ as an extension of the C language. Originally known as ‘C with Classes’, it came to be known as C++ from 1983. It is a multi-paradigm language that supports procedural programming, generic programming, object-oriented programming, and data abstraction.",
+                    "category_id": 3,
+                    "user_id": 1
+                },
+                {
+                    "name": "C",
+                    "desc": "Dennis Ritchie at the Bell Telephone Laboratories developed C to be used on the Unix platform. It is a general-purpose, cross-platform, procedural, imperative programming language. It is used for implementing system software and application software and is one of the most-used computer programming languages of today. The development of C++ and C# was influenced by C",
+                    "category_id": 3,
+                    "user_id": 1
+                }
+            ]
+        }
+    ]
+}

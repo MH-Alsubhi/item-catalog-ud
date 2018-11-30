@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import datetime
+import json
 from db_setup import *
 
 engine = create_engine('sqlite:///catalog.db')
@@ -19,33 +20,17 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-
-
-# Category1 = Category(name="Interpreted Programming Languages",desc ='An interpreted language is a programming language for which most of its implementations execute instructions directly, without previously compiling a program into machine-language instructions. The interpreter executes the program directly, translating each statement into a sequence of one or more subroutines already compiled into machine code. (Wikipedia)'
-#                      )
-# session.add(Category1)
-# session.commit()
-
-# Category2 = Category(name="Functional Programming Languages",
-#                       desc='Functional programming languages define every computation as a mathematical evaluation. They focus on the application of functions. Many of the functional programming languages are bound to mathematical calculations.')
-# session.add(Category2)
-# session.commit()
-
-# item_1 = Item(name="APL",
-#                       desc='Named after the book A Programming Language (Iverson, Kenneth E., 1962), APL is an array programming language. It can work simultaneously on multiple arrays of data. It is interpretive, interactive and a functional programming language.', category_id = 1)
-# session.add(item_1)
-# session.commit()
-
-# item_2 = Item(name="AutoIt",
-#                       desc='It is a freeware automation language for Microsoft Windows. It’s main intent is to create automation scripts that can be used for the execution of certain repetitive tasks on Windows.', category_id = 1)
-# session.add(item_2)
-# session.commit()
-
-# item_3 = Item(name="BASIC",
-#                       desc='Developed by John George Kemeny and Thomas Eugene Kurtz at Dartmouth in 1964, it is an acronym for Beginner’s All-purpose Symbolic Instruction Code. It was designed with the intent of giving the non-science people an access to computers.', category_id = 1)
-# session.add(item_3)
-# session.commit()
-
-
-
-print ("Your database has been populated with fake data!")
+data = json.loads(open('data.json', 'r').read())
+for entry in data['categories']:
+    added_category = Category(
+        name=entry['name'], desc=entry['desc'], user_id=entry['user_id'])
+    session.add(added_category)
+    session.commit()
+    print('category {} added'.format(entry['name']))
+    for item in entry['items']:
+        added_item = Item(name=item['name'],
+                    desc=item['desc'], category_id=item['category_id'], user_id=item['user_id'])
+        session.add(added_item)
+        session.commit()
+        print('item {} added'.format(item['name']))
+        print('all data entered successfully')
