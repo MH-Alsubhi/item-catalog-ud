@@ -143,6 +143,7 @@ def signup():
         session.add(new_user)
         session.commit()
         login_session['name'] = new_user.name
+        login_session['user_id'] = new_user.id
         flash('Signed up successfully welcome {}'.format(new_user.name))
         return redirect(url_for('list_categories'))
 
@@ -151,6 +152,7 @@ def signup():
         # get user
         user = session.query(User).filter_by(email = login_session['email']).one()
         login_session['name'] = user.name
+        login_session['user_id'] = user.id
         flash('Welcome back  {}'.format(user.name))
         return redirect(url_for('list_categories'))
     else:
@@ -176,6 +178,7 @@ def gdisconnect():
         del login_session['gplus_id']
         del login_session['email']
         del login_session['name']
+        del login_session['user_id']
 
     flash("You are logged out successfully")
     return redirect(url_for('list_categories'))
@@ -198,7 +201,7 @@ def list_categories():
 def new_category():
     if request.method == 'POST':
         new_category = Category(
-            name=request.form['name'], desc=request.form['desc'])
+            name=request.form['name'], desc=request.form['desc'],user_id=login_session['user_id'])
         session.add(new_category)
         session.commit()
         flash('Category {} successfully added'.format(new_category.name))
@@ -214,6 +217,8 @@ def edit_category(category_name):
     edited_category = session.query(
         Category).filter_by(name=category_name).one()
     if request.method == 'POST':
+        if edited_category.user_id != login_session['user_id']:
+            return 'You are not authorized to edit this category'
         edited_category.name = request.form['name']
         edit_category.desc = request.form['desc']
         session.add(edited_category)
@@ -231,6 +236,8 @@ def delete_category(category_name):
     deleted_category = session.query(
         Category).filter_by(name=category_name).one()
     if request.method == 'POST':
+        if deleted_category.user_id != login_session['user_id']:
+            return 'You are not authorized to delete this category'
         session.delete(deleted_category)
         session.commit()
         flash('Category {} successfully deleted'.format(deleted_category.name))
@@ -257,7 +264,7 @@ def new_item(category_name):
     categories = session.query(Category).all()
     if request.method == 'POST':
         new_item = Item(
-            name=request.form['name'], desc=request.form['desc'], category_id=category.id)
+            name=request.form['name'], desc=request.form['desc'], category_id=category.id,user_id=login_session['user_id'])
         session.add(new_item)
         session.commit()
         flash('Item {} successfully added'.format(new_item.name))
@@ -274,6 +281,8 @@ def edit_item(category_name, item_name):
     categories = session.query(Category).all()
     edited_item = session.query(Item).filter_by(name=item_name).one()
     if request.method == 'POST':
+        if edited_item.user_id != login_session['user_id']:
+            return 'You are not authorized to edit this item'
         edited_item.name = request.form['name']
         edited_item.desc = request.form['desc']
         edited_item.category_id = request.form['category_id']
@@ -284,9 +293,8 @@ def edit_item(category_name, item_name):
     else:
         return render_template('item/edit.html', item=edited_item, categories=categories, category=category)
 
-#  show item
+# show item
 @app.route('/items/<path:category_name>/<path:item_name>/show')
-@is_loggedin
 def show_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
     item = session.query(Item).filter_by(name=item_name).one()
@@ -300,6 +308,8 @@ def delete_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
     deleted_item = session.query(Item).filter_by(name=item_name).one()
     if request.method == 'POST':
+        if deleted_item.user_id != login_session['user_id']:
+            return 'You are not authorized to delete this item'
         session.delete(deleted_item)
         session.commit()
         flash('Item {} successfully edited'.format(deleted_item.name))
