@@ -142,7 +142,7 @@ def signup():
                         email=login_session['email'])
         session.add(new_user)
         session.commit()
-        login_session['name'] = login_session['name']
+        login_session['name'] = new_user.name
         flash('Signed up successfully welcome {}'.format(new_user.name))
         print('{} - {} - {}'.format(new_user.id,
                                      new_user.name, new_user.email))
