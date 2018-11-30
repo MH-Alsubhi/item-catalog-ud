@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from flask import Flask, render_template, request, redirect, jsonify, url_for, make_response, flash, session as login_session
+from flask import Flask, render_template, request, redirect, url_for, make_response, flash, session as login_session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Category, Item, User
@@ -42,15 +42,19 @@ def is_loggedin(f):
         return f(*args, **kwargs)
     return check
 
+
 # // AUTH ROUTES //
 # login
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 
 # inject session in all tamplates
+
+
 @app.context_processor
 def inject_session_in_all_templates():
-    return dict(login_session = login_session)
+    return dict(login_session=login_session)
+
 
 @app.route('/login')
 def login():
@@ -136,7 +140,8 @@ def gconnect():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     # check if user already in db
-    exists = session.query(User).filter_by(email=login_session['email']).scalar()
+    exists = session.query(User).filter_by(
+        email=login_session['email']).scalar()
     if request.method == 'POST':
         new_user = User(name=request.form['name'],
                         email=login_session['email'])
@@ -150,7 +155,8 @@ def signup():
     # if user already in db
     if exists:
         # get user
-        user = session.query(User).filter_by(email = login_session['email']).one()
+        user = session.query(User).filter_by(
+            email=login_session['email']).one()
         login_session['name'] = user.name
         login_session['user_id'] = user.id
         flash('Welcome back  {}'.format(user.name))
@@ -201,7 +207,7 @@ def list_categories():
 def new_category():
     if request.method == 'POST':
         new_category = Category(
-            name=request.form['name'], desc=request.form['desc'],user_id=login_session['user_id'])
+            name=request.form['name'], desc=request.form['desc'], user_id=login_session['user_id'])
         session.add(new_category)
         session.commit()
         flash('Category {} successfully added'.format(new_category.name))
@@ -264,7 +270,7 @@ def new_item(category_name):
     categories = session.query(Category).all()
     if request.method == 'POST':
         new_item = Item(
-            name=request.form['name'], desc=request.form['desc'], category_id=category.id,user_id=login_session['user_id'])
+            name=request.form['name'], desc=request.form['desc'], category_id=category.id, user_id=login_session['user_id'])
         session.add(new_item)
         session.commit()
         flash('Item {} successfully added'.format(new_item.name))
@@ -294,6 +300,8 @@ def edit_item(category_name, item_name):
         return render_template('item/edit.html', item=edited_item, categories=categories, category=category)
 
 # show item
+
+
 @app.route('/items/<path:category_name>/<path:item_name>/show')
 def show_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
@@ -317,6 +325,61 @@ def delete_item(category_name, item_name):
     else:
         return render_template('item/delete.html', item=deleted_item, category=category)
 
+
+# // JSON endpoints
+
+# categories names list only
+@app.route('/api/v1/categories')
+def categories_json():
+    categories = session.query(Category).all()
+    categories_dict = [i.serialize for i in categories]
+    return json.dumps(categories_dict)
+
+
+# categories names with items list
+@app.route('/api/v1/categories/items')
+def categories_items_json():
+    categories = session.query(Category).all()
+    category_dict = [c.serialize for c in categories]
+    for c in range(len(category_dict)):
+        items = [i.serialize for i in session.query(Item).filter_by(
+            category_id=category_dict[c]["id"]).all()]
+        if items:
+            category_dict[c]["Items"] = items
+    return json.dumps(category_dict)
+
+# single category info
+@app.route('/api/v1/categories/<int:category_id>')
+def category_json(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    category_json = category.serialize
+    return json.dumps(category_json)
+
+# single category info with items
+@app.route('/api/v1/categories/<int:category_id>/items')
+def category_items_json(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    category_dict = [category.serialize]
+    for c in range(len(category_dict)):
+        items = [i.serialize for i in session.query(Item).filter_by(
+            category_id=category_dict[c]["id"]).all()]
+        if items:
+            category_dict[c]["Items"] = items
+    return json.dumps(category_dict)
+
+
+# single item info 
+@app.route('/api/v1/categories/<int:category_id>/items/<int:item_id>')
+def item_json(category_id,item_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    item = session.query(Item).filter_by(category_id=category_id,id = item_id ).one()
+    category_dict = [category.serialize]
+    for c in range(len(category_dict)):
+        items = [i.serialize for i in session.query(Item).filter_by(
+            category_id=category_dict[c]["id"]).all()]
+        if items:
+            category_dict[c]["Items"] = items
+    return json.dumps(category_dict)
 
 if __name__ == '__main__':
     app.debug = True
