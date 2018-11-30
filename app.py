@@ -2,9 +2,10 @@
 from flask import Flask, render_template, request, redirect, jsonify, url_for, make_response, flash, session as login_session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db_setup import Base, Category, Item
+from db_setup import Base, Category, Item, User
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
+from functools import wraps
 import random
 import string
 import httplib2
@@ -22,19 +23,41 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# // DELETE ALL USERS //
+# users = session.query(User).all()
+# for user in users:
+#     session.delete(user)
+#     print('user {} deleted'.format(user.id))
+#     session.commit()
+
+
+# is_logged middleware
+def is_loggedin(f):
+    '''Checks to see whether a user is logged in'''
+    @wraps(f)
+    def check(*args, **kwargs):
+        if 'email' not in login_session:
+            flash('Please login first')
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return check
 
 # // AUTH ROUTES //
 # login
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 
+# inject session in all tamplates
+@app.context_processor
+def inject_session_in_all_templates():
+    return dict(login_session = login_session)
 
 @app.route('/login')
 def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-    return render_template('auth/login.html',STATE=state)
+    return render_template('auth/login.html', STATE=state)
 
 
 # Gconnect route
@@ -70,7 +93,7 @@ def gconnect():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
-    
+
     # Verify that the access token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
@@ -78,15 +101,15 @@ def gconnect():
             json.dumps("Token's user ID doesn't match given user ID."), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    
+
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print ("Token's client ID does not match app's.")
+        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
-    
+
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
@@ -105,23 +128,60 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
-
-    login_session['username'] = data['name']
-    login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    return redirect(url_for('signup'))
 
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
-    print ("done!")
-    return output
 
-    
+# complete signup after auth with googleapis
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    # check if user already in db
+    exists = session.query(User).filter_by(email=login_session['email']).scalar()
+    if request.method == 'POST':
+        new_user = User(name=request.form['name'],
+                        email=login_session['email'])
+        session.add(new_user)
+        session.commit()
+        login_session['name'] = login_session['name']
+        flash('Signed up successfully welcome {}'.format(new_user.name))
+        print('{} - {} - {}'.format(new_user.id,
+                                     new_user.name, new_user.email))
+        return redirect(url_for('list_categories'))
+
+    # if user already in db
+    if exists:
+        # get user
+        user = session.query(User).filter_by(email = login_session['email']).one()
+        login_session['name'] = user.name
+        flash('Welcome back  {}'.format(user.name))
+        return redirect(url_for('list_categories'))
+    else:
+        # if not direct to signup
+        return render_template('auth/signup.html')
+
+
+@app.route('/gdisconnect')
+def gdisconnect():
+    # Only disconnect a connected user.
+    access_token = login_session.get('access_token')
+    print(access_token)
+    if access_token is None:
+        response = make_response(
+            json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    if result['status'] == '200':
+        # Reset the user's sesson.
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['email']
+        del login_session['name']
+
+    flash("You are logged out successfully")
+    return redirect(url_for('list_categories'))
 
 
 # //CATEGORIES ROUTES//
@@ -137,6 +197,7 @@ def list_categories():
 
 # add new category
 @app.route('/categories/new', methods=['GET', 'POST'])
+@is_loggedin
 def new_category():
     if request.method == 'POST':
         new_category = Category(
@@ -150,6 +211,7 @@ def new_category():
 
 # edit category
 @app.route('/categories/<path:category_name>/edit', methods=['GET', 'POST'])
+@is_loggedin
 def edit_category(category_name):
     edited_category = session.query(
         Category).filter_by(name=category_name).one()
@@ -165,6 +227,7 @@ def edit_category(category_name):
 
 # delete category
 @app.route('/categories/<path:category_name>/delete', methods=['GET', 'POST'])
+@is_loggedin
 def delete_category(category_name):
     deleted_category = session.query(
         Category).filter_by(name=category_name).one()
@@ -188,6 +251,7 @@ def list_items(category_name):
 
 # add new item
 @app.route('/categories/<path:category_name>/items/new', methods=['GET', 'POST'])
+@is_loggedin
 def new_item(category_name):
     category = session.query(Category).filter_by(name=category_name).one()
     categories = session.query(Category).all()
@@ -203,6 +267,7 @@ def new_item(category_name):
 
 # edit item
 @app.route('/items/<path:category_name>/<path:item_name>/edit', methods=['GET', 'POST'])
+@is_loggedin
 def edit_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
     categories = session.query(Category).all()
@@ -221,6 +286,7 @@ def edit_item(category_name, item_name):
 
 
 @app.route('/items/<path:category_name>/<path:item_name>/show')
+@is_loggedin
 def show_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
     item = session.query(Item).filter_by(name=item_name).one()
@@ -229,6 +295,7 @@ def show_item(category_name, item_name):
 
 # delete item
 @app.route('/items/<path:category_name>/<path:item_name>', methods=['GET', 'POST'])
+@is_loggedin
 def delete_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
     deleted_item = session.query(Item).filter_by(name=item_name).one()

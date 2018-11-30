@@ -36,10 +36,10 @@
         success: function(result) {
           // Handle or verify the server response if necessary.
           if (result) {
-            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+            $('#result').html('<div class="alert alert-success" role="alert">authorized successfully<h5></h5></div>')
            setTimeout(function() {
-            window.location.href = "/categories";
-           }, 4000);
+            window.location.href = "/signup";
+           }, 1000);
             
         } else if (authResult['error']) {
       console.log('There was an error: ' + authResult['error']);
