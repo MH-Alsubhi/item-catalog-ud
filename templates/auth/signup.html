@@ -1,0 +1,23 @@
+{% include "partials/header.html" %}
+<div class="container">
+    <form action="/signup" method="POST">
+        <div class="form-row align-items-center">
+          <div class="col-sm-3 my-1">
+            <label class="sr-only">Name</label>
+            <input name ="name" type="text" class="form-control" placeholder="Enter your name">
+          </div>
+          
+          <div class="col-sm-3 my-1">
+            <label class="sr-only">Email</label>
+            <div class="input-group">
+              <input name="email" type="text" class="form-control" value="{{login_session['email']}}" disabled>
+            </div>
+          </div>
+        
+          <div class="col-auto my-1">
+            <button type="submit" class="btn btn-primary">Signup</button>
+          </div>
+        </div>
+      </form>
+</div>
+{% include "partials/footer.html" %}
