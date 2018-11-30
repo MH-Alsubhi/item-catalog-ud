@@ -144,8 +144,6 @@ def signup():
         session.commit()
         login_session['name'] = new_user.name
         flash('Signed up successfully welcome {}'.format(new_user.name))
-        print('{} - {} - {}'.format(new_user.id,
-                                     new_user.name, new_user.email))
         return redirect(url_for('list_categories'))
 
     # if user already in db
@@ -164,7 +162,6 @@ def signup():
 def gdisconnect():
     # Only disconnect a connected user.
     access_token = login_session.get('access_token')
-    print(access_token)
     if access_token is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
