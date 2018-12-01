@@ -1,6 +1,6 @@
 # Item catalog project 
 ## Item catalog is an application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items.
-### for this project i will list programming languages and divided them into categories.
+### For this project i will list programming languages and divided them into categories.
 
 
 
