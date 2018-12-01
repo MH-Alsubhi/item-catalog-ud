@@ -9,9 +9,8 @@
   {%for category in categories%}
   <div class="list-group pt-1">
     <a href="{{url_for('list_items',category_name = category.name)}}" class="list-group-item list-group-item-action flex-column align-items-start">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{category.name}}</h5>
-        <h5><span class="badge badge-pill badge-primary">8</span></h5>
+      <div class="d-flex w-100 justify-content-between pb-1">
+         <h5 class="mb-1">{{category.name}}</h5>
       </div>
       <p class="mb-1">{{category.desc}}</p>
       
