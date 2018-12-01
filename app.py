@@ -24,13 +24,6 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# // DELETE ALL USERS //
-# users = session.query(User).all()
-# for user in users:
-#     session.delete(user)
-#     print('user {} deleted'.format(user.id))
-#     session.commit()
-
 
 # is_logged middleware
 def is_loggedin(f):
