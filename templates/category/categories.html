@@ -1,20 +1,22 @@
 {% include "partials/header.html" %}
 <div class="container">
   <!-- categories list -->
-  <a href="{{url_for('new_category')}}" class="btn btn-primary">Add category</a>
+  {%if login_session['user_id']%}
+  <div class="pt-3 pb-3">
+    <a href="{{url_for('new_category')}}" class="btn btn-outline-primary"><i class="fas fa-plus"></i> Add category</a>
+  </div>
+  {%endif%}
   {%for category in categories%}
-  <div class="list-group pt-5">
+  <div class="list-group pt-1">
     <a href="{{url_for('list_items',category_name = category.name)}}" class="list-group-item list-group-item-action flex-column align-items-start">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">{{category.name}}</h5>
         <h5><span class="badge badge-pill badge-primary">8</span></h5>
       </div>
       <p class="mb-1">{{category.desc}}</p>
+      
     </a>
-    {%if login_session['user_id'] == category.user_id%}
-    <a href="{{url_for('edit_category',category_name = category.name)}}" class="btn btn-warning btn-sm">Edit</a>
-    <a href="{{url_for('delete_category',category_name = category.name)}}" class="btn btn-danger btn-sm">Delete</a>
-    {%endif%}
+    
   </div>
   {%endfor%}
 
