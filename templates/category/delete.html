@@ -2,14 +2,19 @@
 
 <div class="container">
     <!-- delete category -->
-
-    <form action="{{url_for('delete_category',category_name = category.name)}}" method="POST">
-        <div>
-            <h2>Are you sure you want to delete <strong>{{category.name}}</strong> ?</h2>
+    <div class="pt-5">
+        <h4>Are you sure you want to delete <strong>{{category.name}}</strong> ?</h4>
+    </div>
+    <form action="{{url_for('delete_category',category_name = category.name)}}" method="POST" class="pt-2">
+        <div class="card">
+            <h5 class="card-header">{{category.name}}</h5>
+            <div class="card-body">
+                <p class="card-text">{{category.desc}}</p>
+            </div>
         </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-danger">Delete</button>
-            <a  class="btn btn-primary" href="{{url_for('list_items',category_name = category.name)}}">Cancel</a>
+        <div class="form-group pt-2">
+            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i> Delete</button>
+            <a class="btn btn-primary" href="{{url_for('list_items',category_name = category.name)}}"><i class="fas fa-times"></i> Cancel</a>
         </div>
     </form>
 
