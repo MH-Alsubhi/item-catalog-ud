@@ -5,19 +5,29 @@
   </script>
   <script src="//apis.google.com/js/platform.js?onload=start"></script>
   <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
-
-  <!-- GOOGLE PLUS SIGN IN BUTTON-->     
-  <div id="signinButton">
-    <span class="g-signin"
-      data-scope="openid email"
-      data-clientid="554024046583-p8qjla3ntilsp3j6t33b2u1nptfn1hvs.apps.googleusercontent.com"
-      data-redirecturi="postmessage"
-      data-accesstype="offline"
-      data-cookiepolicy="single_host_origin"
-      data-callback="signInCallback"
-      data-approvalprompt="force">
-    </span>
+  <div class="row pt-5">
+    <div class="col-sm-6 pt-1">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Sign-in with Google</h5>
+          <p class="card-text">You can use your google account to sign-in</p>
+          <div id="signinButton">
+            <span class="g-signin"
+              data-scope="openid email"
+              data-clientid="554024046583-p8qjla3ntilsp3j6t33b2u1nptfn1hvs.apps.googleusercontent.com"
+              data-redirecturi="postmessage"
+              data-accesstype="offline"
+              data-cookiepolicy="single_host_origin"
+              data-callback="signInCallback"
+              data-approvalprompt="force">
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  <!-- GOOGLE PLUS SIGN IN BUTTON-->     
+  
 
   <div id="result"></div>
 
