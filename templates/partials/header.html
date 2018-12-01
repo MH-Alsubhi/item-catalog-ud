@@ -10,7 +10,8 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="/static/lib/css/bootstrap.min.css">
-
+        <!-- stylesheet -->
+        <link rel="stylesheet" href="/static/css/style.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
             crossorigin="anonymous">
 
@@ -21,7 +22,9 @@
 <body>
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="/">Item Catalog</a>
+            <a class="navbar-brand" href="/">
+                <h3> Item Catalog</h3>
+            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -31,31 +34,25 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Categories
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Action RPG</a>
-                            <a class="dropdown-item" href="#">Shooter</a>
-                            <a class="dropdown-item" href="#">Racing</a>
-                        </div>
-                    </li>
             </div>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item p-1">
+                    <li class="nav-item m-1">
                         {%if login_session['name']%}
-                        <span class="text-light"><strong>{{login_session['name']}}</strong></span>
-                        {%endif%}
-                    </li>
+                        <span class="nav-username"><i class="fas fa-user"></i> Logged in as <strong>{{login_session['name']}}</strong></span>
                     <li class="nav-item p-1">
-                        <a class="btn btn-outline-primary" href="{{url_for('login')}}">Login</a>
+                        <a class="btn btn-outline-light" href="{{url_for('gdisconnect')}}"><i class="fas fa-sign-out-alt"></i>
+                            Logout</a>
                     </li>
+                    {%else%}
                     <li class="nav-item p-1">
-                        <a class="btn btn-outline-primary" href="{{url_for('gdisconnect')}}">Logout</a>
+                        <a class="btn btn-outline-light" href="{{url_for('login')}}"><i class="fas fa-sign-in-alt"></i>
+                            Login</a>
                     </li>
+                    {%endif%}
+                    </li>
+
+
                 </ul>
             </div>
             </ul>
@@ -67,8 +64,11 @@
         <!-- flash messages -->
         {% with messages = get_flashed_messages() %}
         {%for message in messages%}
-        <div class="alert alert-success" role="alert">
-            <h5>{{message}}</h5>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{message}}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         {%endfor%}
         {%endwith%}
