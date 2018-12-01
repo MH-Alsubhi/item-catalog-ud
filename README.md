@@ -8,7 +8,7 @@
  1. Clone or direct download [item-catalog-ud](https://github.com/MH-Alsubhi/item-catalog-ud) repository.
  2. Cd to app folder using `cd/item-catalog-ud`.
  3. Run `pip install -r requirements.txt` to install all requirement.
- 4. Get [credentials](https://developers.google.com/identity/protocols/OpenIDConnect#getcredentials) from google, follow the guide and dwonlad credentials(client_secrets) as `json` file.
+ 4. Get [credentials](https://developers.google.com/identity/protocols/OpenIDConnect#getcredentials) from google, follow the guide and add `http://localhost:5000` to 'Authorized JavaScript origins' and `http://localhost:5000/login` , `http://localhost:5000/gconnect` to Authorized redirect URIs, then download credentials(client_secrets) as `json` file.
  5. Rename downloaded file to `client_secrets.json` and place iside app folder `item-catalog-ud`.
  6. Run `python db_setup.py` command to create database.
  7. Run `python db_seeder.py` command to fill database with starter data.
