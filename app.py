@@ -234,7 +234,7 @@ def edit_category(category_name):
             if edited_category.user_id != login_session['user_id']:
                 return 'You are not authorized to edit this category'
             edited_category.name = request.form['name']
-            edit_category.desc = request.form['desc']
+            edited_category.desc = request.form['desc']
             session.add(edited_category)
             session.commit()
             flash(
