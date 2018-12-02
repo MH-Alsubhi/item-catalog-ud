@@ -138,14 +138,18 @@ def signup():
     exists = session.query(User).filter_by(
         email=login_session['email']).scalar()
     if request.method == 'POST':
-        new_user = User(name=request.form['name'],
-                        email=login_session['email'])
-        session.add(new_user)
-        session.commit()
-        login_session['name'] = new_user.name
-        login_session['user_id'] = new_user.id
-        flash('Signed up successfully welcome {}'.format(new_user.name))
-        return redirect(url_for('list_categories'))
+        if request.form['name']:
+            new_user = User(name=request.form['name'],
+                            email=login_session['email'])
+            session.add(new_user)
+            session.commit()
+            login_session['name'] = new_user.name
+            login_session['user_id'] = new_user.id
+            flash('Signed up successfully welcome {}'.format(new_user.name))
+            return redirect(url_for('list_categories'))
+        else:
+            flash('Signup failed, there is no name')
+            return redirect(url_for('list_categories'))
 
     # if user already in db
     if exists:
@@ -201,14 +205,18 @@ def list_categories():
 @is_loggedin
 def new_category():
     if request.method == 'POST':
-        new_category = Category(
-            name=request.form['name'],
-            desc=request.form['desc'],
-            user_id=login_session['user_id'])
-        session.add(new_category)
-        session.commit()
-        flash('Category {} successfully added'.format(new_category.name))
-        return redirect(url_for('list_categories'))
+        if request.form['name'] and request.form['desc']:
+            new_category = Category(
+                name=request.form['name'],
+                desc=request.form['desc'],
+                user_id=login_session['user_id'])
+            session.add(new_category)
+            session.commit()
+            flash('Category {} successfully added'.format(new_category.name))
+            return redirect(url_for('list_categories'))
+        else:
+          flash('Category not added, there is no name or description !')
+          return redirect(url_for('list_categories'))  
     else:
         return render_template('category/new.html')
 
@@ -220,14 +228,18 @@ def edit_category(category_name):
     edited_category = session.query(
         Category).filter_by(name=category_name).one()
     if request.method == 'POST':
-        if edited_category.user_id != login_session['user_id']:
-            return 'You are not authorized to edit this category'
-        edited_category.name = request.form['name']
-        edit_category.desc = request.form['desc']
-        session.add(edited_category)
-        session.commit()
-        flash('Category {} successfully edited'.format(edited_category.name))
-        return redirect(url_for('list_categories'))
+        if request.form['name'] and request.form['desc']:
+            if edited_category.user_id != login_session['user_id']:
+                return 'You are not authorized to edit this category'
+            edited_category.name = request.form['name']
+            edit_category.desc = request.form['desc']
+            session.add(edited_category)
+            session.commit()
+            flash('Category {} successfully edited'.format(edited_category.name))
+            return redirect(url_for('list_categories'))
+        else:
+            flash('Category not edited, there is no name or description !')
+            return redirect(url_for('list_categories')) 
     else:
         return render_template('category/edit.html', category=edited_category)
 
@@ -266,12 +278,16 @@ def new_item(category_name):
     category = session.query(Category).filter_by(name=category_name).one()
     categories = session.query(Category).all()
     if request.method == 'POST':
-        new_item = Item(
-            name=request.form['name'], desc=request.form['desc'], category_id=category.id, user_id=login_session['user_id'])
-        session.add(new_item)
-        session.commit()
-        flash('Item {} successfully added'.format(new_item.name))
-        return redirect(url_for('list_items', category_name=category_name))
+        if request.form['name'] and request.form['desc']:
+            new_item = Item(
+                name=request.form['name'], desc=request.form['desc'], category_id=category.id, user_id=login_session['user_id'])
+            session.add(new_item)
+            session.commit()
+            flash('Item {} successfully added'.format(new_item.name))
+            return redirect(url_for('list_items', category_name=category_name))
+        else:
+            flash('Item not added, there is no name or description !')
+            return redirect(url_for('list_items', category_name=category_name)) 
     else:
         return render_template('item/new.html', categories=categories, category=category)
 
@@ -284,15 +300,19 @@ def edit_item(category_name, item_name):
     categories = session.query(Category).all()
     edited_item = session.query(Item).filter_by(name=item_name).one()
     if request.method == 'POST':
-        if edited_item.user_id != login_session['user_id']:
-            return 'You are not authorized to edit this item'
-        edited_item.name = request.form['name']
-        edited_item.desc = request.form['desc']
-        edited_item.category_id = request.form['category_id']
-        session.add(edited_item)
-        session.commit()
-        flash('Item {} successfully edited'.format(edited_item.name))
-        return redirect(url_for('list_items', category_name=category.name))
+        if request.form['name'] and request.form['desc']:
+            if edited_item.user_id != login_session['user_id']:
+                return 'You are not authorized to edit this item'
+            edited_item.name = request.form['name']
+            edited_item.desc = request.form['desc']
+            edited_item.category_id = request.form['category_id']
+            session.add(edited_item)
+            session.commit()
+            flash('Item {} successfully edited'.format(edited_item.name))
+            return redirect(url_for('list_items', category_name=category.name))
+        else:
+            flash('Item not edited, there is no name or description !')
+            return redirect(url_for('list_items', category_name=category_name)) 
     else:
         return render_template('item/edit.html', item=edited_item, categories=categories, category=category)
 
