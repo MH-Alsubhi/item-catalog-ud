@@ -3,22 +3,59 @@
 <div class="container">
     <!-- add new category -->
 
-    <form action="{{url_for('new_category')}}" method="POST">
+    <form action="{{url_for('new_category')}}" method="POST" novalidate class="needs-validation">
         <div class="form-group pt-5">
             <label>Category name</label>
-            <input name="name" type="text" class="form-control" placeholder="Category name">
+            <input name="name" type="text" class="form-control" placeholder="Category name" required>
+            <div class="valid-feedback">
+                Looks good! :)
+            </div>
+
+            <div class="invalid-feedback">
+                Please enter category name :(
+            </div>
         </div>
         <div class="form-group">
             <label>Description</label>
-            <textarea name="desc" class="form-control" rows="3" placeholder="Category description"></textarea>
+            <textarea name="desc" class="form-control" rows="3" placeholder="Category description" required></textarea>
+            <div class="valid-feedback">
+                Nice one! :)
+            </div>
+
+            <div class="invalid-feedback">
+                Please enter category description :(
+            </div>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Create</button>
-            <a  class="btn btn-danger" href="/categories"><i class="fas fa-times"></i> Cancel</a>
+            <a class="btn btn-danger" href="/categories"><i class="fas fa-times"></i> Cancel</a>
         </div>
     </form>
 
 
+
+
 </div>
 
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
 {% include "partials/footer.html" %}
