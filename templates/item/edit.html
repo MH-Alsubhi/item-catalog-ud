@@ -31,7 +31,7 @@
         <div class="form-group">
                 <label class="my-1 mr-2">Category</label>
                 <select name = "category_id" class="custom-select my-1 mr-sm-2" required>
-                  <option selected>{{category.name}}</option>
+                  <option selected value="{{category.id}}">{{category.name}}</option>
                   {%for category in categories%}
                   <option value="{{category.id}}">{{category.name}}</option>
                   {%endfor%}

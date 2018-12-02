@@ -327,7 +327,7 @@ def show_item(category_name, item_name):
 
 
 # delete item
-@app.route('/items/<path:category_name>/<path:item_name>', methods=['GET', 'POST'])
+@app.route('/items/<path:category_name>/<path:item_name>/delete', methods=['GET', 'POST'])
 @is_loggedin
 def delete_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
@@ -337,7 +337,7 @@ def delete_item(category_name, item_name):
             return 'You are not authorized to delete this item'
         session.delete(deleted_item)
         session.commit()
-        flash('Item {} successfully edited'.format(deleted_item.name))
+        flash('Item {} successfully deleted'.format(deleted_item.name))
         return redirect(url_for('list_items', category_name=category.name))
     else:
         return render_template('item/delete.html', item=deleted_item, category=category)
