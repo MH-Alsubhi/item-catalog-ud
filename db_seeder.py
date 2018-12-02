@@ -23,13 +23,13 @@ session = DBSession()
 data = json.loads(open('data.json', 'r').read())
 for entry in data['categories']:
     added_category = Category(
-        name=entry['name'], desc=entry['desc'], user_id=entry['user_id'])
+        name=entry['name'], desc=entry['desc'], user_id=0)
     session.add(added_category)
     session.commit()
     print('category {} added'.format(entry['name']))
     for item in entry['items']:
         added_item = Item(name=item['name'],
-                    desc=item['desc'], category_id=item['category_id'], user_id=item['user_id'])
+                    desc=item['desc'], category_id=item['category_id'], user_id=0)
         session.add(added_item)
         session.commit()
         print('item {} added'.format(item['name']))

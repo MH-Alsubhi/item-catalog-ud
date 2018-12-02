@@ -215,14 +215,16 @@ def new_category():
             flash('Category {} successfully added'.format(new_category.name))
             return redirect(url_for('list_categories'))
         else:
-          flash('Category not added, there is no name or description !')
-          return redirect(url_for('list_categories'))  
+            flash('Category not added, there is no name or description !')
+            return redirect(url_for('list_categories'))
     else:
         return render_template('category/new.html')
 
 
 # edit category
-@app.route('/categories/<path:category_name>/edit', methods=['GET', 'POST'])
+@app.route(
+    '/categories/'
+    '<path:category_name>/edit', methods=['GET', 'POST'])
 @is_loggedin
 def edit_category(category_name):
     edited_category = session.query(
@@ -235,11 +237,12 @@ def edit_category(category_name):
             edit_category.desc = request.form['desc']
             session.add(edited_category)
             session.commit()
-            flash('Category {} successfully edited'.format(edited_category.name))
+            flash(
+                'Category {} successfully edited'.format(edited_category.name))
             return redirect(url_for('list_categories'))
         else:
             flash('Category not edited, there is no name or description !')
-            return redirect(url_for('list_categories')) 
+            return redirect(url_for('list_categories'))
     else:
         return render_template('category/edit.html', category=edited_category)
 
@@ -259,7 +262,8 @@ def delete_category(category_name):
         return redirect(url_for('list_categories'))
 
     else:
-        return render_template('category/delete.html', category=deleted_category)
+        return render_template(
+            'category/delete.html', category=deleted_category)
 
 
 # //ITEMS ROUTES//
@@ -272,7 +276,8 @@ def list_items(category_name):
 
 
 # add new item
-@app.route('/categories/<path:category_name>/items/new', methods=['GET', 'POST'])
+@app.route(
+    '/categories/<path:category_name>/items/new', methods=['GET', 'POST'])
 @is_loggedin
 def new_item(category_name):
     category = session.query(Category).filter_by(name=category_name).one()
@@ -280,20 +285,24 @@ def new_item(category_name):
     if request.method == 'POST':
         if request.form['name'] and request.form['desc']:
             new_item = Item(
-                name=request.form['name'], desc=request.form['desc'], category_id=category.id, user_id=login_session['user_id'])
+                name=request.form['name'], desc=request.form['desc'],
+                category_id=category.id, user_id=login_session['user_id'])
             session.add(new_item)
             session.commit()
             flash('Item {} successfully added'.format(new_item.name))
             return redirect(url_for('list_items', category_name=category_name))
         else:
             flash('Item not added, there is no name or description !')
-            return redirect(url_for('list_items', category_name=category_name)) 
+            return redirect(url_for('list_items', category_name=category_name))
     else:
-        return render_template('item/new.html', categories=categories, category=category)
+        return render_template(
+            'item/new.html', categories=categories, category=category)
 
 
 # edit item
-@app.route('/items/<path:category_name>/<path:item_name>/edit', methods=['GET', 'POST'])
+@app.route(
+    '/items/<path:category_name>/<path:item_name>/edit', methods=[
+        'GET', 'POST'])
 @is_loggedin
 def edit_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
@@ -312,9 +321,14 @@ def edit_item(category_name, item_name):
             return redirect(url_for('list_items', category_name=category.name))
         else:
             flash('Item not edited, there is no name or description !')
-            return redirect(url_for('list_items', category_name=category_name)) 
+            return redirect(url_for('list_items', category_name=category_name))
     else:
-        return render_template('item/edit.html', item=edited_item, categories=categories, category=category)
+        return render_template(
+            ''
+            'item'
+            '/edit'
+            '.'
+            'html', item=edited_item, categories=categories, category=category)
 
 # show item
 
@@ -327,7 +341,9 @@ def show_item(category_name, item_name):
 
 
 # delete item
-@app.route('/items/<path:category_name>/<path:item_name>/delete', methods=['GET', 'POST'])
+@app.route(
+    '/items/'
+    '<path:category_name>/<path:item_name>/delete', methods=['GET', 'POST'])
 @is_loggedin
 def delete_item(category_name, item_name):
     category = session.query(Category).filter_by(name=category_name).one()
@@ -340,7 +356,8 @@ def delete_item(category_name, item_name):
         flash('Item {} successfully deleted'.format(deleted_item.name))
         return redirect(url_for('list_items', category_name=category.name))
     else:
-        return render_template('item/delete.html', item=deleted_item, category=category)
+        return render_template(
+            'item/delete.html', item=deleted_item, category=category)
 
 
 # // JSON endpoints
