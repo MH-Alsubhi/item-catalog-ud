@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from flask import Flask, render_template, request, redirect, url_for, make_response, flash, session as login_session
+from flask import Flask, render_template, request, redirect
+from flask import url_for, make_response, flash, session as login_session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Category, Item, User
@@ -22,13 +23,6 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
-# // DELETE ALL USERS //
-# users = session.query(User).all()
-# for user in users:
-#     session.delete(user)
-#     print('user {} deleted'.format(user.id))
-#     session.commit()
 
 
 # is_logged middleware
@@ -67,7 +61,7 @@ def login():
 # Gconnect route
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-     # Validate state token
+    # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -117,8 +111,9 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps(
+            'Current user is already connected.'),
+            200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -143,14 +138,18 @@ def signup():
     exists = session.query(User).filter_by(
         email=login_session['email']).scalar()
     if request.method == 'POST':
-        new_user = User(name=request.form['name'],
-                        email=login_session['email'])
-        session.add(new_user)
-        session.commit()
-        login_session['name'] = new_user.name
-        login_session['user_id'] = new_user.id
-        flash('Signed up successfully welcome {}'.format(new_user.name))
-        return redirect(url_for('list_categories'))
+        if request.form['name']:
+            new_user = User(name=request.form['name'],
+                            email=login_session['email'])
+            session.add(new_user)
+            session.commit()
+            login_session['name'] = new_user.name
+            login_session['user_id'] = new_user.id
+            flash('Signed up successfully welcome {}'.format(new_user.name))
+            return redirect(url_for('list_categories'))
+        else:
+            flash('Signup failed, there is no name')
+            return redirect(url_for('list_categories'))
 
     # if user already in db
     if exists:
@@ -206,12 +205,18 @@ def list_categories():
 @is_loggedin
 def new_category():
     if request.method == 'POST':
-        new_category = Category(
-            name=request.form['name'], desc=request.form['desc'], user_id=login_session['user_id'])
-        session.add(new_category)
-        session.commit()
-        flash('Category {} successfully added'.format(new_category.name))
-        return redirect(url_for('list_categories'))
+        if request.form['name'] and request.form['desc']:
+            new_category = Category(
+                name=request.form['name'],
+                desc=request.form['desc'],
+                user_id=login_session['user_id'])
+            session.add(new_category)
+            session.commit()
+            flash('Category {} successfully added'.format(new_category.name))
+            return redirect(url_for('list_categories'))
+        else:
+          flash('Category not added, there is no name or description !')
+          return redirect(url_for('list_categories'))  
     else:
         return render_template('category/new.html')
 
@@ -223,14 +228,18 @@ def edit_category(category_name):
     edited_category = session.query(
         Category).filter_by(name=category_name).one()
     if request.method == 'POST':
-        if edited_category.user_id != login_session['user_id']:
-            return 'You are not authorized to edit this category'
-        edited_category.name = request.form['name']
-        edit_category.desc = request.form['desc']
-        session.add(edited_category)
-        session.commit()
-        flash('Category {} successfully edited'.format(edited_category.name))
-        return redirect(url_for('list_categories'))
+        if request.form['name'] and request.form['desc']:
+            if edited_category.user_id != login_session['user_id']:
+                return 'You are not authorized to edit this category'
+            edited_category.name = request.form['name']
+            edit_category.desc = request.form['desc']
+            session.add(edited_category)
+            session.commit()
+            flash('Category {} successfully edited'.format(edited_category.name))
+            return redirect(url_for('list_categories'))
+        else:
+            flash('Category not edited, there is no name or description !')
+            return redirect(url_for('list_categories')) 
     else:
         return render_template('category/edit.html', category=edited_category)
 
@@ -269,12 +278,16 @@ def new_item(category_name):
     category = session.query(Category).filter_by(name=category_name).one()
     categories = session.query(Category).all()
     if request.method == 'POST':
-        new_item = Item(
-            name=request.form['name'], desc=request.form['desc'], category_id=category.id, user_id=login_session['user_id'])
-        session.add(new_item)
-        session.commit()
-        flash('Item {} successfully added'.format(new_item.name))
-        return redirect(url_for('list_items', category_name=category_name))
+        if request.form['name'] and request.form['desc']:
+            new_item = Item(
+                name=request.form['name'], desc=request.form['desc'], category_id=category.id, user_id=login_session['user_id'])
+            session.add(new_item)
+            session.commit()
+            flash('Item {} successfully added'.format(new_item.name))
+            return redirect(url_for('list_items', category_name=category_name))
+        else:
+            flash('Item not added, there is no name or description !')
+            return redirect(url_for('list_items', category_name=category_name)) 
     else:
         return render_template('item/new.html', categories=categories, category=category)
 
@@ -287,15 +300,19 @@ def edit_item(category_name, item_name):
     categories = session.query(Category).all()
     edited_item = session.query(Item).filter_by(name=item_name).one()
     if request.method == 'POST':
-        if edited_item.user_id != login_session['user_id']:
-            return 'You are not authorized to edit this item'
-        edited_item.name = request.form['name']
-        edited_item.desc = request.form['desc']
-        edited_item.category_id = request.form['category_id']
-        session.add(edited_item)
-        session.commit()
-        flash('Item {} successfully edited'.format(edited_item.name))
-        return redirect(url_for('list_items', category_name=category.name))
+        if request.form['name'] and request.form['desc']:
+            if edited_item.user_id != login_session['user_id']:
+                return 'You are not authorized to edit this item'
+            edited_item.name = request.form['name']
+            edited_item.desc = request.form['desc']
+            edited_item.category_id = request.form['category_id']
+            session.add(edited_item)
+            session.commit()
+            flash('Item {} successfully edited'.format(edited_item.name))
+            return redirect(url_for('list_items', category_name=category.name))
+        else:
+            flash('Item not edited, there is no name or description !')
+            return redirect(url_for('list_items', category_name=category_name)) 
     else:
         return render_template('item/edit.html', item=edited_item, categories=categories, category=category)
 
@@ -327,6 +344,7 @@ def delete_item(category_name, item_name):
 
 
 # // JSON endpoints
+# API V1
 
 # categories names list only
 @app.route('/api/v1/categories')
@@ -349,6 +367,8 @@ def categories_items_json():
     return json.dumps(category_dict)
 
 # single category info
+
+
 @app.route('/api/v1/categories/<int:category_id>')
 def category_json(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
@@ -356,6 +376,8 @@ def category_json(category_id):
     return json.dumps(category_json)
 
 # single category info with items
+
+
 @app.route('/api/v1/categories/<int:category_id>/items')
 def category_items_json(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
@@ -368,11 +390,12 @@ def category_items_json(category_id):
     return json.dumps(category_dict)
 
 
-# single item info 
+# single item info
 @app.route('/api/v1/categories/<int:category_id>/items/<int:item_id>')
-def item_json(category_id,item_id):
+def item_json(category_id, item_id):
     category = session.query(Category).filter_by(id=category_id).one()
-    item = session.query(Item).filter_by(category_id=category_id,id = item_id ).one()
+    item = session.query(Item).filter_by(
+        category_id=category_id, id=item_id).one()
     category_dict = [category.serialize]
     for c in range(len(category_dict)):
         items = [i.serialize for i in session.query(Item).filter_by(
@@ -380,6 +403,7 @@ def item_json(category_id,item_id):
         if items:
             category_dict[c]["Items"] = items
     return json.dumps(category_dict)
+
 
 if __name__ == '__main__':
     app.debug = True
