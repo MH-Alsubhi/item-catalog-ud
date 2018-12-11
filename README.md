@@ -538,6 +538,6 @@ Expected response :-
 
  - [ ] Limiting api calls.
  - [x] Improve UI.
- - [ ] Add sign-in using Facebook.
+ - ~~[ ] Add sign-in using Facebook.~~
  - [ ] Document api using [Postman](https://www.getpostman.com/).
- - [ ] Deploy app to linux server.
+ - [x] Deploy app to linux server.
